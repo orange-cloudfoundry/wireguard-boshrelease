@@ -1,0 +1,43 @@
+name: wireguard
+version: "8"
+commit_hash: d690ab4
+uncommitted_changes: false
+jobs:
+- name: iftop-pkg-install
+  version: 074803d67e44ce204acb819db75eaebfc185452a637c1db8753edc4ef51a5bf3
+  fingerprint: 074803d67e44ce204acb819db75eaebfc185452a637c1db8753edc4ef51a5bf3
+  sha1: sha256:0c3a146b2fc377784f2d1efdc674f6948cf5c7f76bfc78de09003ec59dd86e58
+  packages:
+  - iftop
+- name: load-ntopng-image
+  version: f3db747f4462ae97d0caf58d6198efd20bd132ae526c1669ed6804777b0f931a
+  fingerprint: f3db747f4462ae97d0caf58d6198efd20bd132ae526c1669ed6804777b0f931a
+  sha1: sha256:a954e57b3e46f88815f3ba0fecba439c5df8ce8b36f08a50c6feaaaa8c438eae
+  packages:
+  - ntopng-container-image
+- name: wireguard
+  version: 4f87f12d4c422a87d220583d6042e8f473a3b5cf0e24b4708b657c8f6acb742e
+  fingerprint: 4f87f12d4c422a87d220583d6042e8f473a3b5cf0e24b4708b657c8f6acb742e
+  sha1: sha256:bf8b6b5bd1de71007c4b023e6213e0a79e47fe068623abda453cef00697b67a6
+  packages:
+  - wireguard-deb
+packages:
+- name: iftop
+  version: 9076ba837dc826398dc2f6157586006b4b2ed523c799094fe8d262343d1fd8ea
+  fingerprint: 9076ba837dc826398dc2f6157586006b4b2ed523c799094fe8d262343d1fd8ea
+  sha1: sha256:2e8e120f2888c4978d14e9968c0c1103bbda3f210f344f7e8dd5b7de15ce3147
+  dependencies: []
+- name: ntopng-container-image
+  version: 32967efa2656b51a587c48b600065899e32e69f7c3655b979bfd2c7161cefda8
+  fingerprint: 32967efa2656b51a587c48b600065899e32e69f7c3655b979bfd2c7161cefda8
+  sha1: sha256:643abaceda05f6e1ab6eadd774cccfba562ba2b0674e27ef1434f78a6f844ef9
+  dependencies: []
+- name: wireguard-deb
+  version: a730f7a58471cd2ded281837eeadb6556c950ced63d68934206dbda5d358aab1
+  fingerprint: a730f7a58471cd2ded281837eeadb6556c950ced63d68934206dbda5d358aab1
+  sha1: sha256:8c12f185ae1c56f7f0382055d6a7af834fbab7f813caf85192b2cb76b9cc138b
+  dependencies: []
+license:
+  version: cf0ca1fe65dee9607c7bb9460a3f20835e582cbb7f5b2c3625fba2e21d7e91b9
+  fingerprint: cf0ca1fe65dee9607c7bb9460a3f20835e582cbb7f5b2c3625fba2e21d7e91b9
+  sha1: sha256:e102e996178d4a5deb17a0365024188b22879936fb0d46750ce0a21038d7fe75
