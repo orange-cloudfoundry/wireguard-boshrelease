@@ -23,6 +23,52 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install vendir cli
+        #See https://github.com/marketplace/actions/install-a-binary-from-github-releases
+        uses: jaxxstorm/action-install-gh-release@cd6b2b78ad38bdd294341cda064ec0692b06215b # v1.14.0
+        with:
+          repo: carvel-dev/vendir
+          tag: v0.34.6
+          extension-matching: disable
+          chmod: 0755
+          rename-to: vendir
+
+      - name: vendor-add-blob
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_BOSH_ACCES_KEY_ID: ${{ secrets.AWS_BOSH_ACCES_KEY_ID }}
+          AWS_BOSH_SECRET_ACCES_KEY: ${{ secrets.AWS_BOSH_SECRET_ACCES_KEY }}
+        run: |
+          set -x # enable traces
+          #pwd
+          #find .
+          # configure git
+          git config --global user.name "workflows/k9s-package/create-final-bosh-release"
+          git config --global user.email "<>"
+          git config --global --add safe.directory /github/workspace
+          export VENDIR_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
+          ./vendor.sh
+          echo "State after vendir:"
+          tree -s src
+          git add vendir.lock
+          # FIXME: optimize for idempotency 
+          ./addblob.sh
+          remote_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@${GITHUB_SERVER_URL#https://}/${GITHUB_REPOSITORY}.git"
+          
+          git add config/blobs.yml
+          git status
+          if git commit -a --dry-run 2>&1 >/dev/null;then 
+            git commit -a -m "updating blobs" && \
+              git push ${remote_repo} HEAD:${GITHUB_REF_NAME}
+          else
+            echo "Nothing to commit"
+          fi
+          echo "Resulting State:" 
+          tree -s src
+          if [ -d blobs ];then # The blobs dir is only present when a blob is modified or has not yet been published.
+            tree -s blobs
+          fi
+
       - name: Bump version
         id: bump-version
         uses: ietf-tools/semver-action@1c7c3f023f427188333afc94c8b91c76d63ec799 # v1
