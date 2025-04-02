@@ -1,5 +1,0 @@
-check process load-ntopng-image with pidfile /var/vcap/sys/run/load-ntopng-image/load-ntopng-image.pid
-  group vcap
-  start program "/var/vcap/jobs/load-ntopng-image/bin/ctl start"
-  stop program  "/var/vcap/jobs/load-ntopng-image/bin/ctl stop"
- 

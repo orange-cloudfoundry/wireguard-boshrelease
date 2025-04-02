@@ -1,5 +1,0 @@
----
-name: ntopng-container-image
-dependencies: []
-files:
-- ntop/ntop.tar.gz
