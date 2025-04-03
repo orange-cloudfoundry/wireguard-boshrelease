@@ -2,5 +2,7 @@
 blobstore:
   provider: s3
   options:
-    bucket_name: orange-wireguard-boshrelease
+    bucket_name: s3selfcare-wireguard-boshrelease
+    region: eu
+    host: storage.googleapis.com
 final_name: wireguard

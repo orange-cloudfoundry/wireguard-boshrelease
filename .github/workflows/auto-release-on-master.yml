@@ -1,0 +1,103 @@
+name: auto-release
+
+on:
+  workflow_dispatch: # to manually force a release on ignore paths
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '.github/**'
+      - .gitignore
+      - CONTRIBUTING.md
+      - README.md
+      - renovate.json5
+      - run-renovate-locally.bash
+
+jobs:
+  build:
+    name: "ship it"
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Install vendir cli
+        #See https://github.com/marketplace/actions/install-a-binary-from-github-releases
+        uses: jaxxstorm/action-install-gh-release@cd6b2b78ad38bdd294341cda064ec0692b06215b # v1.14.0
+        with:
+          repo: carvel-dev/vendir
+          tag: v0.34.6
+          extension-matching: disable
+          chmod: 0755
+          rename-to: vendir
+
+      - name: vendor-add-blob
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_BOSH_ACCES_KEY_ID: ${{ secrets.AWS_BOSH_ACCES_KEY_ID }}
+          AWS_BOSH_SECRET_ACCES_KEY: ${{ secrets.AWS_BOSH_SECRET_ACCES_KEY }}
+        run: |
+          set -x # enable traces
+          #pwd
+          #find .
+          # configure git
+          git config --global user.name "workflows/k9s-package/create-final-bosh-release"
+          git config --global user.email "<>"
+          git config --global --add safe.directory /github/workspace
+          export VENDIR_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
+          ./vendor.sh
+          echo "State after vendir:"
+          tree -s src
+          git add vendir.lock
+          # FIXME: optimize for idempotency 
+          ./addblob.sh
+          remote_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@${GITHUB_SERVER_URL#https://}/${GITHUB_REPOSITORY}.git"
+          
+          git add config/blobs.yml
+          git status
+          if git commit -a --dry-run 2>&1 >/dev/null;then 
+            git commit -a -m "updating blobs" && \
+              git push ${remote_repo} HEAD:${GITHUB_REF_NAME}
+          else
+            echo "Nothing to commit"
+          fi
+          echo "Resulting State:" 
+          tree -s src
+          if [ -d blobs ];then # The blobs dir is only present when a blob is modified or has not yet been published.
+            tree -s blobs
+          fi
+
+      - name: Bump version
+        id: bump-version
+        uses: ietf-tools/semver-action@1c7c3f023f427188333afc94c8b91c76d63ec799 # v1
+        with:
+          token: ${{ github.token }}
+          branch: master
+          noVersionBumpBehavior: patch
+          majorList: major
+
+      - name: create bosh release
+        id: create-bosh-release
+        uses: orange-cloudfoundry/create-bosh-release-action@fd4ddefcec42563de953491bb56286f8db2e4862 # v1.1.0
+        with:
+          target_branch: ${{github.ref_name}}
+          tag_name: ${{ steps.bump-version.outputs.next}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_BOSH_ACCES_KEY_ID: ${{ secrets.AWS_BOSH_ACCES_KEY_ID }}
+          AWS_BOSH_SECRET_ACCES_KEY: ${{ secrets.AWS_BOSH_SECRET_ACCES_KEY }}
+
+      # see https://github.com/ncipollo/release-action
+      - name: create github release
+        id: create-github-release
+        uses: ncipollo/release-action@cdcc88a9acf3ca41c16c37bb7d21b9ad48560d87 # v1.15.0
+        with:
+          tag: ${{ steps.create-bosh-release.outputs.tagged_version }}
+          draft: false
+          allowUpdates: false # > indicates if we should update a release if it already exists.
+          generateReleaseNotes: true
+          artifacts: ./${{ steps.create-bosh-release.outputs.file }}
+          artifactContentType: application/zip
+          artifactErrorsFailBuild: true # > indicates if artifact read or upload errors should fail the build.

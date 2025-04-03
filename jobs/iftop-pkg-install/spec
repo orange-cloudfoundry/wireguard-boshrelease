@@ -1,5 +1,0 @@
----
-name: iftop-pkg-install
-packages: ["iftop"]
-templates:
-  bin/post-start.sh: bin/post-start

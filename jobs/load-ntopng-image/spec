@@ -1,9 +1,0 @@
----
-name: load-ntopng-image
-packages:
-- ntopng-container-image
-templates:
-  helpers/ctl_setup.sh: helpers/ctl_setup.sh
-  helpers/ctl_utils.sh: helpers/ctl_utils.sh
-  bin/ctl: bin/ctl
-properties: {}

@@ -1,15 +1,17 @@
 apiVersion: vendir.k14s.io/v1alpha1
 kind: Config
 directories:
-
-
-- path: src 
+- path: src
   contents:
-  - path: debs/iftop
-    # fetches iftop deb package 
+  - path: debs/wireguard
     http:
       # asset URL (required)
-      url: http://archive.ubuntu.com/ubuntu/pool/universe/i/iftop/iftop_1.0~pre4-4_amd64.deb
+      # See version available at https://pkgs.org/search/?q=wireguard
+      url: http://archive.ubuntu.com/ubuntu/pool/universe/w/wireguard/wireguard_1.0.20210914-1ubuntu2_all.deb
       # verification checksum (optional)
-      sha256: "a509db288bd71dfb79ad7e9af7c93691a6cb598cbef29f1a6ef89ec2fd3ba102"
+      sha256: "45c218ebf8b76862421efd865f940af6c25f7d7e0107a1b4f75a7c4e4da50afe"
 
+  - path: debs/wireguard-tools
+    http:
+      url: http://archive.ubuntu.com/ubuntu/pool/main/w/wireguard/wireguard-tools_1.0.20210914-1ubuntu2_amd64.deb
+      sha256: "76b69e4e8b76ebd981e423ab002826efda000cb42dea0683994fc2d323bc60aa"
