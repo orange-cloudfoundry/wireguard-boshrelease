@@ -1,8 +1,6 @@
 wireguard/wireguard-tools.deb:
-  size: 89262
-  object_id: 245bad99-9f7f-4ba0-73a5-e38cc9d14aa1
-  sha: sha256:235b178424c108e38aa30940ab72b0f2122911df9e1d6c244b9fb0d82903fac0
+  size: 86916
+  sha: sha256:76b69e4e8b76ebd981e423ab002826efda000cb42dea0683994fc2d323bc60aa
 wireguard/wireguard.deb:
-  size: 3184
-  object_id: a4a7295e-88bc-40bf-623b-aa96e6cc734d
-  sha: sha256:5ef21a46dcac7cae9f1017a535653b85949b6fbae14b4a72c98e828f78ba132f
+  size: 3114
+  sha: sha256:45c218ebf8b76862421efd865f940af6c25f7d7e0107a1b4f75a7c4e4da50afe
