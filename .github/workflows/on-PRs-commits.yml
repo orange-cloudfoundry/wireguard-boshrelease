@@ -110,4 +110,4 @@ jobs:
         with:
           name: archive-bosh-dev-release-tgz
           path: |
-            k3s-*.tgz
+            ./${{ steps.create-bosh-release.outputs.file }}
